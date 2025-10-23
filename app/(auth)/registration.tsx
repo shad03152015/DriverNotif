@@ -13,7 +13,6 @@ import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker';
 import { RegistrationFormData, AuthProvider } from '../../types/registration';
-import { registerDriver } from '../../services/api';
 import {
   validateEmail,
   validateRequired,
@@ -29,26 +28,19 @@ export default function RegistrationScreen() {
   const [authProvider, setAuthProvider] = useState<AuthProvider>('email');
 
   const onSubmit = async (data: RegistrationFormData) => {
-    setIsSubmitting(true);
+    // Navigate to review screen with form data
+    const formDataWithProvider = {
+      ...data,
+      authProvider,
+    };
 
-    try {
-      const registrationData: RegistrationFormData = {
-        ...data,
-        authProvider,
-        profilePhoto: profilePhoto ? {
-          uri: profilePhoto.uri,
-          type: 'image/jpeg',
-          name: profilePhoto.fileName || 'profile.jpg',
-        } : undefined,
-      };
-
-      await registerDriver(registrationData);
-      router.push('/(auth)/success');
-    } catch (error: any) {
-      Alert.alert('Registration Failed', error.message || 'Please try again');
-    } finally {
-      setIsSubmitting(false);
-    }
+    router.push({
+      pathname: '/(auth)/review',
+      params: {
+        data: JSON.stringify(formDataWithProvider),
+        photoUri: profilePhoto?.uri || '',
+      },
+    });
   };
 
   const pickImage = async () => {
@@ -344,7 +336,7 @@ export default function RegistrationScreen() {
           {isSubmitting ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text className="text-white text-lg font-semibold">Submit for Review</Text>
+            <Text className="text-white text-lg font-semibold">Review Details</Text>
           )}
         </TouchableOpacity>
       </View>

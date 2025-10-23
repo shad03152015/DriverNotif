@@ -3,7 +3,7 @@
  */
 
 import axios from 'axios';
-import { RegistrationFormData, RegistrationApiResponse } from '../types/registration';
+import { RegistrationFormData, RegistrationApiResponse, LoginCredentials, LoginResponse } from '../types/registration';
 
 // Get from environment variables
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
@@ -65,6 +65,32 @@ export const registerDriver = async (formData: RegistrationFormData): Promise<Re
       if (error.response) {
         // Server responded with error
         throw new Error(error.response.data?.message || error.response.data?.error || 'Registration failed');
+      } else if (error.request) {
+        // No response received
+        throw new Error('Unable to reach server. Please check your internet connection.');
+      }
+    }
+    throw new Error('An unexpected error occurred. Please try again.');
+  }
+};
+
+export const loginDriver = async (credentials: LoginCredentials): Promise<LoginResponse> => {
+  try {
+    const response = await apiClient.post<LoginResponse>(
+      '/api/v1/auth/login',
+      {
+        email_or_username: credentials.emailOrUsername,
+        password: credentials.password,
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        // Server responded with error
+        const errorMessage = error.response.data?.detail || error.response.data?.message || 'Login failed';
+        throw new Error(errorMessage);
       } else if (error.request) {
         // No response received
         throw new Error('Unable to reach server. Please check your internet connection.');

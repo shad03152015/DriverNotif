@@ -363,21 +363,23 @@ export default function ActiveRideScreen() {
       </MapView>
 
       {/* Navigation Instruction at Top */}
-      <View className="absolute top-16 left-4 right-20">
-        <View className="bg-gray-900 rounded-2xl p-4 flex-row items-center border border-gray-700">
-          <View className="w-14 h-14 bg-orange-600 rounded-full items-center justify-center mr-4">
-            <Text className="text-white text-2xl">↰</Text>
-          </View>
-          <View className="flex-1">
-            <Text className="text-white text-xl font-bold">
-              {currentInstruction.instruction}
-            </Text>
-            <Text className="text-gray-400 text-base mt-1">
-              {currentInstruction.location}
-            </Text>
+      {rideStatus !== 'at_pickup' && (
+        <View className="absolute top-16 left-4 right-20">
+          <View className="bg-gray-900 rounded-2xl p-4 flex-row items-center border border-gray-700">
+            <View className="w-14 h-14 bg-orange-600 rounded-full items-center justify-center mr-4">
+              <Text className="text-white text-2xl">↰</Text>
+            </View>
+            <View className="flex-1">
+              <Text className="text-white text-xl font-bold">
+                {currentInstruction.instruction}
+              </Text>
+              <Text className="text-gray-400 text-base mt-1">
+                {currentInstruction.location}
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
+      )}
 
       {/* Map Controls (Right Side) */}
       <View className="absolute top-16 right-4">

@@ -243,10 +243,27 @@ export default function ActiveRideScreen() {
                 text2: 'Thank you for the ride!',
                 position: 'top',
               });
-              // Navigate back to dashboard after a delay
+              
+              // Prepare ride completion data
+              const rideCompletionData = {
+                fare: bookingData.fare,
+                tip: bookingData.tip || 1.50, // Default tip or from booking data
+                payment_method: bookingData.payment_method || 'Cash Payment',
+                passenger_name: bookingData.passenger_name,
+                distance: bookingData.distance,
+                duration: bookingData.estimated_duration || 22, // Use actual duration if tracked
+                passenger_rating: bookingData.passenger_rating,
+              };
+              
+              // Navigate to ride completed screen
               setTimeout(() => {
-                router.replace('/(dashboard)');
-              }, 2000);
+                router.push({
+                  pathname: '/(dashboard)/ride-completed',
+                  params: {
+                    rideData: JSON.stringify(rideCompletionData),
+                  },
+                });
+              }, 1000);
             },
           },
         ]

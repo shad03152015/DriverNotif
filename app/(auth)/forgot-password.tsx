@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import Toast from 'react-native-toast-message';
@@ -80,84 +81,86 @@ export default function ForgotPasswordScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      className="flex-1 bg-white"
-    >
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
+    <SafeAreaView className="flex-1 bg-white">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        className="flex-1"
       >
-        <View className="flex-1 px-6 pt-20 pb-8">
-          {/* Logo/Brand Area */}
-          <View className="items-center mb-12">
-            <View className="w-24 h-24 bg-orange-100 rounded-full items-center justify-center mb-6">
-              <Text className="text-5xl">🚗</Text>
-            </View>
-            <Text className="text-2xl font-bold text-gray-900">
-              HotRider
-            </Text>
-          </View>
-
-          {/* Title */}
-          <Text className="text-3xl font-bold text-gray-900 mb-3">
-            Reset Your Password
-          </Text>
-
-          {/* Subtitle */}
-          <Text className="text-base text-gray-500 mb-10 leading-6">
-            Enter the email or phone number associated with your account, and we'll send you a link to reset your password.
-          </Text>
-
-          {/* Email or Phone Number Input */}
-          <View className="mb-8">
-            <Text className="text-base font-medium text-gray-900 mb-2">
-              Email or Phone Number
-            </Text>
-            <TextInput
-              className="bg-white border border-gray-300 rounded-xl px-4 py-4 text-base text-gray-900"
-              placeholder="Enter your email or phone number"
-              placeholderTextColor="#9CA3AF"
-              value={emailOrPhone}
-              onChangeText={setEmailOrPhone}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              autoComplete="email"
-            />
-          </View>
-
-          {/* Send Reset Link Button */}
-          <TouchableOpacity
-            onPress={handleSendResetLink}
-            disabled={isLoading}
-            className={`rounded-full py-4 items-center mb-8 ${
-              isLoading ? 'bg-gray-400' : 'bg-orange-600'
-            }`}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text className="text-white text-lg font-semibold">
-                Send Reset Link
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View className="flex-1 px-6 pt-20 pb-8">
+            {/* Logo/Brand Area */}
+            <View className="items-center mb-12">
+              <View className="w-24 h-24 bg-orange-100 rounded-full items-center justify-center mb-6">
+                <Text className="text-5xl">🚗</Text>
+              </View>
+              <Text className="text-2xl font-bold text-gray-900">
+                HotRider
               </Text>
-            )}
-          </TouchableOpacity>
+            </View>
 
-          {/* Back to Login Link */}
-          <TouchableOpacity
-            onPress={handleBackToLogin}
-            className="flex-row items-center justify-center"
-          >
-            <Text className="text-2xl mr-2">←</Text>
-            <Text className="text-gray-600 text-base font-medium">
-              Back to Login
+            {/* Title */}
+            <Text className="text-3xl font-bold text-gray-900 mb-3">
+              Reset Your Password
             </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
 
-      {/* Toast Container */}
-      <Toast />
-    </KeyboardAvoidingView>
+            {/* Subtitle */}
+            <Text className="text-base text-gray-500 mb-10 leading-6">
+              Enter the email or phone number associated with your account, and we'll send you a link to reset your password.
+            </Text>
+
+            {/* Email or Phone Number Input */}
+            <View className="mb-8">
+              <Text className="text-base font-medium text-gray-900 mb-2">
+                Email or Phone Number
+              </Text>
+              <TextInput
+                className="bg-white border border-gray-300 rounded-xl px-4 py-4 text-base text-gray-900"
+                placeholder="Enter your email or phone number"
+                placeholderTextColor="#9CA3AF"
+                value={emailOrPhone}
+                onChangeText={setEmailOrPhone}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                autoComplete="email"
+              />
+            </View>
+
+            {/* Send Reset Link Button */}
+            <TouchableOpacity
+              onPress={handleSendResetLink}
+              disabled={isLoading}
+              className={`rounded-full py-4 items-center mb-8 ${
+                isLoading ? 'bg-gray-400' : 'bg-orange-600'
+              }`}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text className="text-white text-lg font-semibold">
+                  Send Reset Link
+                </Text>
+              )}
+            </TouchableOpacity>
+
+            {/* Back to Login Link */}
+            <TouchableOpacity
+              onPress={handleBackToLogin}
+              className="flex-row items-center justify-center"
+            >
+              <Text className="text-2xl mr-2">←</Text>
+              <Text className="text-gray-600 text-base font-medium">
+                Back to Login
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+
+        {/* Toast Container */}
+        <Toast />
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }

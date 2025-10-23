@@ -14,20 +14,16 @@ export default function Index() {
   const checkAuthStatus = async () => {
     try {
       const token = await AsyncStorage.getItem('access_token');
-      
       if (token) {
-        // User is logged in, navigate to main app
-        // TODO: Add token validation and navigate to dashboard
-        router.replace('/(auth)/login');
+        // User is logged in, navigate to dashboard
+        router.replace('/(dashboard)');
       } else {
-        // User not logged in, go to login screen
+        // No token, navigate to login
         router.replace('/(auth)/login');
       }
     } catch (error) {
-      // Error checking auth, go to login
+      console.error('Auth check error:', error);
       router.replace('/(auth)/login');
-    } finally {
-      setIsChecking(false);
     }
   };
 

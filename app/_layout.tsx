@@ -15,6 +15,7 @@ export default function RootLayout() {
       <Stack.Screen name="(auth)/registration" />
       <Stack.Screen name="(auth)/review" />
       <Stack.Screen name="(auth)/success" />
+      <Stack.Screen name="(dashboard)/index" />
     </Stack>
   );
 }

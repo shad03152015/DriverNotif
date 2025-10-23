@@ -12,7 +12,7 @@ from app.database import (
     close_mongo_connection,
     create_indexes
 )
-from app.routes import registration, auth
+from app.routes import registration, auth, dashboard
 
 
 @asynccontextmanager
@@ -66,7 +66,7 @@ app.add_middleware(
 # Include routers
 app.include_router(
     registration.router,
-    prefix=f"{settings.api_v1_prefix}/registration",
+    prefix=settings.api_v1_prefix,
     tags=["registration"]
 )
 
@@ -74,6 +74,12 @@ app.include_router(
     auth.router,
     prefix=f"{settings.api_v1_prefix}/auth",
     tags=["authentication"]
+)
+
+app.include_router(
+    dashboard.router,
+    prefix=f"{settings.api_v1_prefix}/dashboard",
+    tags=["dashboard"]
 )
 
 

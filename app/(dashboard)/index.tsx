@@ -136,14 +136,11 @@ export default function DashboardScreen() {
     setSelectedBooking(null);
   };
 
-  const handleAcceptBooking = async (bookingId: string) => {
+  const handleAcceptBooking = async (booking: any) => {
     try {
       setIsModalVisible(false);
       
-      // Find the booking that was accepted
-      const acceptedBooking = bookingRequests.find((b: any) => b.id === bookingId);
-      
-      if (!acceptedBooking) {
+      if (!booking) {
         Toast.show({
           type: 'error',
           text1: 'Error',
@@ -154,7 +151,7 @@ export default function DashboardScreen() {
       }
 
       // Call API to accept booking
-      await acceptBooking(bookingId);
+      await acceptBooking(booking.id);
       
       Toast.show({
         type: 'success',
@@ -167,7 +164,7 @@ export default function DashboardScreen() {
       router.push({
         pathname: '/(dashboard)/active-ride',
         params: {
-          booking: JSON.stringify(acceptedBooking),
+          booking: JSON.stringify(booking),
         },
       });
 

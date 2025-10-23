@@ -1,0 +1,84 @@
+/**
+ * API client for backend communication
+ */
+
+import axios from 'axios';
+import { RegistrationFormData, RegistrationApiResponse } from '../types/registration';
+
+// Get from environment variables
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
+const API_KEY = process.env.EXPO_PUBLIC_API_KEY || '';
+
+const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'X-API-Key': API_KEY,
+  },
+  timeout: 30000, // 30 seconds
+});
+
+export const registerDriver = async (formData: RegistrationFormData): Promise<RegistrationApiResponse> => {
+  try {
+    // Create FormData for multipart/form-data request
+    const data = new FormData();
+
+    // Add all fields to FormData
+    data.append('email', formData.email);
+    data.append('auth_provider', formData.authProvider);
+    data.append('first_name', formData.firstName);
+    data.append('surname', formData.surname);
+    data.append('birthdate', formData.birthdate);
+    data.append('birthplace', formData.birthplace);
+    data.append('license_number', formData.licenseNumber);
+    data.append('license_expiry_date', formData.licenseExpiryDate);
+    data.append('address_line_1', formData.addressLine1);
+    data.append('primary_phone', formData.primaryPhone);
+
+    // Optional fields
+    if (formData.oauthId) data.append('oauth_id', formData.oauthId);
+    if (formData.middleName) data.append('middle_name', formData.middleName);
+    if (formData.addressLine2) data.append('address_line_2', formData.addressLine2);
+    if (formData.secondaryPhone) data.append('secondary_phone', formData.secondaryPhone);
+
+    // Add profile photo if exists
+    if (formData.profilePhoto) {
+      data.append('profile_photo', {
+        uri: formData.profilePhoto.uri,
+        type: formData.profilePhoto.type,
+        name: formData.profilePhoto.name,
+      } as any);
+    }
+
+    const response = await apiClient.post<RegistrationApiResponse>(
+      '/api/v1/registration/driver',
+      data,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        // Server responded with error
+        throw new Error(error.response.data?.message || error.response.data?.error || 'Registration failed');
+      } else if (error.request) {
+        // No response received
+        throw new Error('Unable to reach server. Please check your internet connection.');
+      }
+    }
+    throw new Error('An unexpected error occurred. Please try again.');
+  }
+};
+
+export const healthCheck = async (): Promise<boolean> => {
+  try {
+    await apiClient.get('/health');
+    return true;
+  } catch {
+    return false;
+  }
+};

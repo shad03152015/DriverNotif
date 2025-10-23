@@ -82,3 +82,36 @@ export interface AppleOAuthResponse {
     familyName?: string;
   };
 }
+
+// Authentication types
+export interface LoginCredentials {
+  emailOrUsername: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    driver_id: string;
+    email: string;
+    username?: string;
+    first_name: string;
+    surname: string;
+    status: string;
+    access_token: string;
+    token_type: string;
+  };
+  error?: string;
+  detail?: string;
+}
+
+export interface DriverData {
+  driver_id: string;
+  email: string;
+  username?: string;
+  firstName: string;
+  surname: string;
+  status: string;
+  accessToken: string;
+}

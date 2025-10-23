@@ -2,7 +2,7 @@
 Authentication service for driver login and password management.
 """
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Optional
 from fastapi import HTTPException
 from app.database import get_drivers_collection

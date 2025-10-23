@@ -4,6 +4,7 @@
 
 import axios from 'axios';
 import { RegistrationFormData, RegistrationApiResponse, LoginCredentials, LoginResponse } from '../types/registration';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Get from environment variables
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
@@ -131,5 +132,97 @@ export const healthCheck = async (): Promise<boolean> => {
     return true;
   } catch {
     return false;
+  }
+};
+
+export const getDashboardData = async (): Promise<any> => {
+  try {
+    const token = await AsyncStorage.getItem('access_token');
+    const response = await apiClient.get('/api/v1/dashboard/stats', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        throw new Error(error.response.data?.detail || error.response.data?.message || 'Failed to load dashboard');
+      } else if (error.request) {
+        throw new Error('Unable to reach server. Please check your internet connection.');
+      }
+    }
+    throw new Error('An unexpected error occurred. Please try again.');
+  }
+};
+
+export const updateOnlineStatus = async (isOnline: boolean): Promise<any> => {
+  try {
+    const token = await AsyncStorage.getItem('access_token');
+    const response = await apiClient.post(
+      '/api/v1/dashboard/online-status',
+      { is_online: isOnline },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        throw new Error(error.response.data?.detail || error.response.data?.message || 'Failed to update status');
+      } else if (error.request) {
+        throw new Error('Unable to reach server. Please check your internet connection.');
+      }
+    }
+    throw new Error('An unexpected error occurred. Please try again.');
+  }
+};
+
+export const getBookingRequests = async (): Promise<any[]> => {
+  try {
+    const token = await AsyncStorage.getItem('access_token');
+    const response = await apiClient.get('/api/v1/dashboard/booking-requests', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data.bookings || [];
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        throw new Error(error.response.data?.detail || error.response.data?.message || 'Failed to load bookings');
+      } else if (error.request) {
+        throw new Error('Unable to reach server. Please check your internet connection.');
+      }
+    }
+    throw new Error('An unexpected error occurred. Please try again.');
+  }
+};
+
+export const acceptBooking = async (bookingId: string): Promise<any> => {
+  try {
+    const token = await AsyncStorage.getItem('access_token');
+    const response = await apiClient.post(
+      `/api/v1/dashboard/bookings/${bookingId}/accept`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        throw new Error(error.response.data?.detail || error.response.data?.message || 'Failed to accept booking');
+      } else if (error.request) {
+        throw new Error('Unable to reach server. Please check your internet connection.');
+      }
+    }
+    throw new Error('An unexpected error occurred. Please try again.');
   }
 };

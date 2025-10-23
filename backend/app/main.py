@@ -12,7 +12,7 @@ from app.database import (
     close_mongo_connection,
     create_indexes
 )
-from app.routes import registration
+from app.routes import registration, auth
 
 
 @asynccontextmanager
@@ -68,6 +68,12 @@ app.include_router(
     registration.router,
     prefix=f"{settings.api_v1_prefix}/registration",
     tags=["registration"]
+)
+
+app.include_router(
+    auth.router,
+    prefix=f"{settings.api_v1_prefix}/auth",
+    tags=["authentication"]
 )
 
 

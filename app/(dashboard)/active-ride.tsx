@@ -423,70 +423,186 @@ export default function ActiveRideScreen() {
 
         {/* Content */}
         <View className="bg-gray-900 rounded-t-3xl px-6 pt-6 pb-8">
-          {/* ETA Display */}
-          <View className="items-center mb-6">
-            <Text className="text-white text-5xl font-bold">{eta}</Text>
-            <Text className="text-gray-400 text-base mt-2">
-              ETA • {distanceRemaining} away
-            </Text>
-          </View>
-
-          {/* Divider */}
-          <View className="h-px bg-gray-800 mb-6" />
-
-          {/* Passenger Info */}
-          <View className="flex-row items-center justify-between mb-6">
-            <View className="flex-row items-center flex-1">
-              {/* Profile Image */}
-              <View className="w-16 h-16 bg-gray-700 rounded-full items-center justify-center mr-4">
-                <Text className="text-3xl">👤</Text>
+          {rideStatus === 'at_pickup' ? (
+            /* You've Arrived Screen */
+            <>
+              {/* Title */}
+              <View className="items-center mb-6">
+                <Text className="text-white text-4xl font-bold">You've Arrived</Text>
               </View>
 
-              {/* Name and Status */}
-              <View className="flex-1">
-                <Text className="text-gray-400 text-sm mb-1">{getStatusText()}</Text>
-                <Text className="text-white text-2xl font-semibold">
-                  {bookingData.passenger_name}
-                </Text>
-                <View className="flex-row items-center mt-1">
-                  <Text className="text-yellow-500 text-base mr-1">⭐</Text>
-                  <Text className="text-white text-lg font-medium">
-                    {bookingData.passenger_rating?.toFixed(1) || '4.9'}
-                  </Text>
+              {/* Waiting Time */}
+              <View className="items-center mb-6">
+                <Text className="text-gray-400 text-base mb-4">Waiting Time</Text>
+                <View className="flex-row gap-4">
+                  <View className="bg-gray-800 rounded-2xl px-8 py-6 items-center min-w-[140px]">
+                    <Text className="text-white text-5xl font-bold mb-2">
+                      {String(waitingMinutes).padStart(2, '0')}
+                    </Text>
+                    <Text className="text-gray-400 text-base">Minutes</Text>
+                  </View>
+                  <View className="bg-gray-800 rounded-2xl px-8 py-6 items-center min-w-[140px]">
+                    <Text className="text-white text-5xl font-bold mb-2">
+                      {String(waitingSeconds).padStart(2, '0')}
+                    </Text>
+                    <Text className="text-gray-400 text-base">Seconds</Text>
+                  </View>
                 </View>
               </View>
-            </View>
 
-            {/* Message and Call Buttons */}
-            <View className="flex-row gap-3">
+              {/* Divider */}
+              <View className="h-px bg-gray-800 mb-6" />
+
+              {/* Passenger Info */}
+              <View className="flex-row items-center justify-between mb-6">
+                <View className="flex-row items-center flex-1">
+                  {/* Profile Image */}
+                  <View className="w-16 h-16 bg-gray-700 rounded-full items-center justify-center mr-4">
+                    <Text className="text-3xl">👤</Text>
+                  </View>
+
+                  {/* Name and Rating */}
+                  <View className="flex-1">
+                    <Text className="text-white text-2xl font-semibold mb-1">
+                      {bookingData.passenger_name}
+                    </Text>
+                    <View className="flex-row items-center">
+                      <Text className="text-yellow-500 text-lg mr-1">⭐</Text>
+                      <Text className="text-white text-lg font-medium">
+                        {bookingData.passenger_rating?.toFixed(1) || '4.9'} stars
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                {/* Message and Call Buttons */}
+                <View className="flex-row gap-3">
+                  <TouchableOpacity
+                    onPress={handleMessage}
+                    className="w-14 h-14 bg-gray-800 rounded-full items-center justify-center"
+                  >
+                    <Text className="text-white text-xl">🔕</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={handleCall}
+                    className="w-14 h-14 bg-gray-800 rounded-full items-center justify-center"
+                  >
+                    <Text className="text-white text-xl">📞</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* Divider */}
+              <View className="h-px bg-gray-800 mb-6" />
+
+              {/* Pickup Location */}
+              <View className="mb-4">
+                <View className="flex-row items-start">
+                  <View className="w-8 h-8 items-center justify-center mr-3">
+                    <Text className="text-red-500 text-xl">📍</Text>
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-gray-400 text-sm mb-1">Picking up at:</Text>
+                    <Text className="text-white text-lg font-medium">
+                      {bookingData.pickup_location}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Destination Location */}
+              <View className="mb-6">
+                <View className="flex-row items-start">
+                  <View className="w-8 h-8 items-center justify-center mr-3">
+                    <Text className="text-blue-500 text-xl">📍</Text>
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-gray-400 text-sm mb-1">Destination:</Text>
+                    <Text className="text-white text-lg font-medium">
+                      {bookingData.dropoff_location}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Start Ride Button */}
               <TouchableOpacity
-                onPress={handleMessage}
-                className="w-14 h-14 bg-blue-600 rounded-full items-center justify-center"
+                onPress={handleArrived}
+                className="bg-orange-600 rounded-2xl py-5 items-center"
               >
-                <Text className="text-white text-xl">💬</Text>
+                <Text className="text-white text-xl font-bold">Start Ride</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            /* Normal Navigation Screen */
+            <>
+              {/* ETA Display */}
+              <View className="items-center mb-6">
+                <Text className="text-white text-5xl font-bold">{eta}</Text>
+                <Text className="text-gray-400 text-base mt-2">
+                  ETA • {distanceRemaining} away
+                </Text>
+              </View>
+
+              {/* Divider */}
+              <View className="h-px bg-gray-800 mb-6" />
+
+              {/* Passenger Info */}
+              <View className="flex-row items-center justify-between mb-6">
+                <View className="flex-row items-center flex-1">
+                  {/* Profile Image */}
+                  <View className="w-16 h-16 bg-gray-700 rounded-full items-center justify-center mr-4">
+                    <Text className="text-3xl">👤</Text>
+                  </View>
+
+                  {/* Name and Status */}
+                  <View className="flex-1">
+                    <Text className="text-gray-400 text-sm mb-1">{getStatusText()}</Text>
+                    <Text className="text-white text-2xl font-semibold">
+                      {bookingData.passenger_name}
+                    </Text>
+                    <View className="flex-row items-center mt-1">
+                      <Text className="text-yellow-500 text-base mr-1">⭐</Text>
+                      <Text className="text-white text-lg font-medium">
+                        {bookingData.passenger_rating?.toFixed(1) || '4.9'}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                {/* Message and Call Buttons */}
+                <View className="flex-row gap-3">
+                  <TouchableOpacity
+                    onPress={handleMessage}
+                    className="w-14 h-14 bg-blue-600 rounded-full items-center justify-center"
+                  >
+                    <Text className="text-white text-xl">💬</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={handleCall}
+                    className="w-14 h-14 bg-blue-600 rounded-full items-center justify-center"
+                  >
+                    <Text className="text-white text-xl">📞</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* Action Button */}
+              <TouchableOpacity
+                onPress={handleArrived}
+                className="bg-orange-600 rounded-2xl py-5 items-center mb-3"
+              >
+                <Text className="text-white text-xl font-bold">{getButtonText()}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity
-                onPress={handleCall}
-                className="w-14 h-14 bg-blue-600 rounded-full items-center justify-center"
-              >
-                <Text className="text-white text-xl">📞</Text>
+              {/* Cancel Ride Link */}
+              <TouchableOpacity onPress={handleCancelRide} className="items-center py-2">
+                <Text className="text-red-500 text-lg font-semibold">Cancel Ride</Text>
               </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Action Button */}
-          <TouchableOpacity
-            onPress={handleArrived}
-            className="bg-orange-600 rounded-2xl py-5 items-center mb-3"
-          >
-            <Text className="text-white text-xl font-bold">{getButtonText()}</Text>
-          </TouchableOpacity>
-
-          {/* Cancel Ride Link */}
-          <TouchableOpacity onPress={handleCancelRide} className="items-center py-2">
-            <Text className="text-red-500 text-lg font-semibold">Cancel Ride</Text>
-          </TouchableOpacity>
+            </>
+          )}
         </View>
       </View>
 

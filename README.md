@@ -20,6 +20,7 @@ HotRide Driver Registration System
 ├── Frontend (React Native + Expo)
 │   ├── Registration Form UI
 │   ├── Form Validation
+│   ├── Review Details Screen (NEW)
 │   ├── Photo Upload
 │   └── Success Screen
 │
@@ -193,6 +194,8 @@ Content-Type: multipart/form-data
 ✅ Email validation
 ✅ Profile photo upload (optional, max 5MB, JPG/PNG)
 ✅ Form validation (client and server-side)
+✅ Review details screen with confirmation step
+✅ Go back to edit functionality
 ✅ API key authentication
 ✅ MongoDB data persistence
 ✅ Success screen with registration timeline
@@ -238,9 +241,11 @@ MongoDB collection: `drivers`
 3. Run on simulator/emulator
 4. Fill in registration form
 5. Upload photo (optional)
-6. Submit
-7. Verify success screen
-8. Check MongoDB for new driver document
+6. Tap "Review Details" button
+7. **Review all entered information on the review screen**
+8. **Either "Go Back & Edit" to make changes, or "Confirm & Submit"**
+9. Verify success screen appears
+10. Check MongoDB for new driver document
 
 ### Manual API Testing
 

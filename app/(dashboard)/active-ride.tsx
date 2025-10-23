@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
+import { PlatformMapView as MapView, PlatformMarker as Marker, PlatformPolyline as Polyline, MAP_PROVIDER_GOOGLE as PROVIDER_GOOGLE } from '../../components/MapViewWrapper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 

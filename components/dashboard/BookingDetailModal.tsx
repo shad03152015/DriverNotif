@@ -28,7 +28,7 @@ interface BookingDetailModalProps {
   visible: boolean;
   booking: Booking | null;
   onClose: () => void;
-  onAccept: (bookingId: string) => void;
+  onAccept: (booking: Booking) => void;
 }
 
 export default function BookingDetailModal({
@@ -59,7 +59,7 @@ export default function BookingDetailModal({
 
   const handleAccept = () => {
     if (booking) {
-      onAccept(booking.id);
+      onAccept(booking);
     }
   };
 

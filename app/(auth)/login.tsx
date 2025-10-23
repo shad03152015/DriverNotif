@@ -48,16 +48,8 @@ export default function LoginScreen() {
         await AsyncStorage.setItem('driver_email', response.data.email);
         await AsyncStorage.setItem('driver_name', `${response.data.first_name} ${response.data.surname}`);
 
-        // Navigate to main app (placeholder for now)
-        Alert.alert('Success', 'Login successful!', [
-          {
-            text: 'OK',
-            onPress: () => {
-              // TODO: Navigate to main driver app dashboard
-              router.replace('/');
-            },
-          },
-        ]);
+        // Navigate to dashboard
+        router.replace('/(dashboard)');
       }
     } catch (error: any) {
       Alert.alert('Login Failed', error.message || 'Please check your credentials and try again.');

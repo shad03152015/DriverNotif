@@ -37,6 +37,8 @@ class DriverModel(BaseModel):
 
     # Authentication
     email: EmailStr
+    username: Optional[str] = None  # Username for login (defaults to email if not set)
+    password_hash: Optional[str] = None  # Hashed password for email auth
     auth_provider: str  # "email", "google", or "apple"
     oauth_id: Optional[str] = None
 

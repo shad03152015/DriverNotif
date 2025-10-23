@@ -100,6 +100,31 @@ export const loginDriver = async (credentials: LoginCredentials): Promise<LoginR
   }
 };
 
+export const sendPasswordResetLink = async (emailOrPhone: string): Promise<{ success: boolean; message: string }> => {
+  try {
+    const response = await apiClient.post<{ success: boolean; message: string }>(
+      '/api/v1/auth/forgot-password',
+      {
+        email_or_phone: emailOrPhone,
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        // Server responded with error
+        const errorMessage = error.response.data?.detail || error.response.data?.message || 'Failed to send reset link';
+        throw new Error(errorMessage);
+      } else if (error.request) {
+        // No response received
+        throw new Error('Unable to reach server. Please check your internet connection.');
+      }
+    }
+    throw new Error('An unexpected error occurred. Please try again.');
+  }
+};
+
 export const healthCheck = async (): Promise<boolean> => {
   try {
     await apiClient.get('/health');

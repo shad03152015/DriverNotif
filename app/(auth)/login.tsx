@@ -67,7 +67,7 @@ export default function LoginScreen() {
   };
 
   const handleForgotPassword = () => {
-    Alert.alert('Forgot Password', 'Password reset functionality coming soon. Please contact support.');
+    router.push('/(auth)/forgot-password');
   };
 
   const handleQuickLogin = () => {

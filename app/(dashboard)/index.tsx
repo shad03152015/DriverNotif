@@ -9,7 +9,7 @@ import {
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { PlatformMapView as MapView, PlatformMarker as Marker, MAP_PROVIDER_GOOGLE as PROVIDER_GOOGLE } from '../../components/MapViewWrapper';
 import { getDashboardData, updateOnlineStatus, getBookingRequests, acceptBooking } from '../../services/api';
 import BookingListView from '../../components/dashboard/BookingListView';
 import BookingSliderView from '../../components/dashboard/BookingSliderView';

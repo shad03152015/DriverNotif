@@ -7,6 +7,7 @@ from typing import Optional
 from fastapi import HTTPException
 from app.database import get_drivers_collection
 from app.utils.security import verify_password, hash_password, create_access_token
+from app.services.email_service import EmailService
 
 
 class AuthService:
@@ -145,6 +146,124 @@ class AuthService:
         )
 
         return True
+
+    @staticmethod
+    async def request_password_reset(email_or_phone: str) -> dict:
+        """
+        Request a password reset for a driver account.
+
+        Args:
+            email_or_phone: Driver's email or phone number
+
+        Returns:
+            dict: Success message
+
+        Raises:
+            HTTPException: If driver not found
+        """
+        collection = get_drivers_collection()
+
+        # Try to find driver by email or phone
+        driver = await collection.find_one({
+            "$or": [
+                {"email": email_or_phone},
+                {"primary_phone": email_or_phone}
+            ]
+        })
+
+        if not driver:
+            raise HTTPException(
+                status_code=404,
+                detail="No account found with that email or phone number"
+            )
+
+        # Check if account uses email authentication
+        if driver.get("auth_provider") != "email":
+            raise HTTPException(
+                status_code=400,
+                detail=f"This account uses {driver.get('auth_provider')} authentication. Password reset is not available."
+            )
+
+        # Generate reset token
+        driver_id = str(driver["_id"])
+        email = driver["email"]
+        reset_token = await EmailService.generate_reset_token(driver_id, email)
+
+        # Send reset email
+        email_sent = EmailService.send_password_reset_email(email, reset_token)
+
+        if not email_sent:
+            raise HTTPException(
+                status_code=500,
+                detail="Failed to send reset email. Please try again later."
+            )
+
+        return {
+            "success": True,
+            "message": f"Password reset instructions have been sent to {email}"
+        }
+
+    @staticmethod
+    async def reset_password_with_token(token: str, new_password: str) -> dict:
+        """
+        Reset password using a valid reset token.
+
+        Args:
+            token: Password reset token
+            new_password: New password to set
+
+        Returns:
+            dict: Success message
+
+        Raises:
+            HTTPException: If token invalid or password reset fails
+        """
+        from bson import ObjectId
+
+        # Verify token
+        token_doc = await EmailService.verify_reset_token(token)
+
+        if not token_doc:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid or expired reset token"
+            )
+
+        # Get driver
+        collection = get_drivers_collection()
+        driver = await collection.find_one({"_id": ObjectId(token_doc["driver_id"])})
+
+        if not driver:
+            raise HTTPException(
+                status_code=404,
+                detail="Driver not found"
+            )
+
+        # Hash new password
+        password_hash = hash_password(new_password)
+
+        # Update password
+        await collection.update_one(
+            {"_id": ObjectId(token_doc["driver_id"])},
+            {
+                "$set": {
+                    "password_hash": password_hash,
+                    "updated_at": datetime.utcnow()
+                }
+            }
+        )
+
+        # Mark token as used
+        await EmailService.mark_token_as_used(token)
+
+        # Send confirmation email
+        driver_name = f"{driver['first_name']} {driver['surname']}"
+        EmailService.send_password_changed_notification(driver["email"], driver_name)
+
+        return {
+            "success": True,
+            "message": "Password has been reset successfully"
+        }
 
     @staticmethod
     async def get_driver_by_id(driver_id: str) -> Optional[dict]:

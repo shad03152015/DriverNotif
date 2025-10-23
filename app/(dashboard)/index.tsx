@@ -10,7 +10,7 @@ import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { getDashboardData, updateOnlineStatus, getBookingRequests } from '../../services/api';
+import { getDashboardData, updateOnlineStatus, getBookingRequests, acceptBooking } from '../../services/api';
 import BookingListView from '../../components/dashboard/BookingListView';
 import BookingSliderView from '../../components/dashboard/BookingSliderView';
 import BookingDetailModal from '../../components/dashboard/BookingDetailModal';
@@ -136,11 +136,50 @@ export default function DashboardScreen() {
     setSelectedBooking(null);
   };
 
-  const handleAcceptBooking = async (bookingId: string) => {
-    setIsModalVisible(false);
-    setSelectedBooking(null);
-    // Refresh bookings after acceptance
-    await fetchBookingRequests();
+  const handleAcceptBooking = async (booking: any) => {
+    try {
+      setIsModalVisible(false);
+      
+      if (!booking) {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Booking not found',
+          position: 'top',
+        });
+        return;
+      }
+
+      // Call API to accept booking
+      await acceptBooking(booking.id);
+      
+      Toast.show({
+        type: 'success',
+        text1: 'Booking Accepted',
+        text2: 'Starting navigation...',
+        position: 'top',
+      });
+
+      // Navigate to active ride screen with booking data
+      router.push({
+        pathname: '/(dashboard)/active-ride',
+        params: {
+          booking: JSON.stringify(booking),
+        },
+      });
+
+      // Clear selected booking and refresh
+      setSelectedBooking(null);
+      await fetchBookingRequests();
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Failed to accept booking',
+        position: 'top',
+      });
+      setSelectedBooking(null);
+    }
   };
 
   const handleProfilePress = () => {

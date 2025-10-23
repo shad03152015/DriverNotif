@@ -27,7 +27,7 @@ interface Booking {
 interface BookingSliderViewProps {
   bookings: Booking[];
   onBookingPress: (booking: Booking) => void;
-  onAccept: (bookingId: string) => void;
+  onAccept: (booking: Booking) => void;
 }
 
 const BookingCard = ({
@@ -258,7 +258,7 @@ export default function BookingSliderView({
   const handleSwipeRight = () => {
     // Accept booking
     if (bookings[currentIndex]) {
-      onAccept(bookings[currentIndex].id);
+      onAccept(bookings[currentIndex]);
       setCurrentIndex((prev) => prev + 1);
     }
   };

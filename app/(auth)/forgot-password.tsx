@@ -85,7 +85,7 @@ export default function ForgotPasswordScreen() {
       className="flex-1 bg-white"
     >
       <ScrollView
-        contentContainerClassName="flex-grow"
+        contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
         <View className="flex-1 px-6 pt-20 pb-8">

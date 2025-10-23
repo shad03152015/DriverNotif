@@ -59,6 +59,43 @@ class PasswordSetupRequest(BaseModel):
         }
 
 
+class ForgotPasswordRequest(BaseModel):
+    """Schema for forgot password request."""
+
+    email_or_phone: str
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "email_or_phone": "john.doe@example.com"
+            }
+        }
+
+
+class ForgotPasswordResponse(BaseModel):
+    """Schema for forgot password response."""
+
+    success: bool = True
+    message: str
+
+
+class ResetPasswordRequest(BaseModel):
+    """Schema for resetting password with token."""
+
+    token: str
+    new_password: str
+    confirm_password: str
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "token": "abc123resettoken",
+                "new_password": "newSecurePassword123",
+                "confirm_password": "newSecurePassword123"
+            }
+        }
+
+
 class TokenData(BaseModel):
     """Schema for token payload data."""
 

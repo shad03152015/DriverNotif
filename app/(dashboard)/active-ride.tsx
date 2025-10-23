@@ -42,6 +42,10 @@ export default function ActiveRideScreen() {
     distance: 200,
     location: 'Maple Avenue',
   });
+  
+  // Waiting time at pickup (counts up)
+  const [waitingMinutes, setWaitingMinutes] = useState(0);
+  const [waitingSeconds, setWaitingSeconds] = useState(0);
 
   // Route coordinates (example - in production these would come from navigation API)
   const [routeCoordinates, setRouteCoordinates] = useState([
@@ -79,6 +83,27 @@ export default function ActiveRideScreen() {
     // For now, we'll simulate with static data
     fitMapToRoute();
   }, []);
+
+  // Waiting time timer - starts when driver arrives at pickup
+  useEffect(() => {
+    if (rideStatus === 'at_pickup') {
+      const interval = setInterval(() => {
+        setWaitingSeconds((prev) => {
+          if (prev === 59) {
+            setWaitingMinutes((m) => m + 1);
+            return 0;
+          }
+          return prev + 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    } else {
+      // Reset timer when leaving at_pickup state
+      setWaitingMinutes(0);
+      setWaitingSeconds(0);
+    }
+  }, [rideStatus]);
 
   const fitMapToRoute = () => {
     if (mapRef.current && routeCoordinates.length > 0) {
